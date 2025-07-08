@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <link rel="stylesheet" href="Calculator.css">
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="calculator-display" id="display" disabled />
+        <div class="calculator-buttons">
+            <button class="btn" data-value="7">7</button>
+            <button class="btn" data-value="8">8</button>
+            <button class="btn" data-value="9">9</button>
+            <button class="btn operator" data-value="/">&divide;</button>
+            <button class="btn" data-value="4">4</button>
+            <button class="btn" data-value="5">5</button>
+            <button class="btn" data-value="6">6</button>
+            <button class="btn operator" data-value="*">&times;</button>
+            <button class="btn" data-value="1">1</button>
+            <button class="btn" data-value="2">2</button>
+            <button class="btn" data-value="3">3</button>
+            <button class="btn operator" data-value="-">&minus;</button>
+            <button class="btn" data-value="0">0</button>
+            <button class="btn" data-value=".">.</button>
+            <button class="btn" id="clear">C</button>
+            <button class="btn operator" data-value="+">+</button>
+            <button class="btn" id="equals" style="grid-column: span 4;">=</button>
+        </div>
+    </div>
+    <script>
+        const display = document.getElementById('display');
+        const buttons = document.querySelectorAll('.btn');
+        let currentInput = '';
+        let operator = '';
+        let firstOperand = null;
+        let shouldResetDisplay = false;
+
+        function resetCalculator() {
+            currentInput = '';
+            operator = '';
+            firstOperand = null;
+            display.value = '';
+            shouldResetDisplay = false;
+        }
+
+        function calculate(a, b, op) {
+            a = parseFloat(a);
+            b = parseFloat(b);
+            if (op === '+') return a + b;
+            if (op === '-') return a - b;
+            if (op === '*') return a * b;
+            if (op === '/') return b !== 0 ? a / b : 'Error';
+            return b;
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.getAttribute('data-value');
+                if (button.id === 'clear') {
+                    resetCalculator();
+                } else if (button.id === 'equals') {
+                    if (operator && firstOperand !== null && currentInput !== '') {
+                        const result = calculate(firstOperand, currentInput, operator);
+                        display.value = result;
+                        currentInput = result.toString();
+                        operator = '';
+                        firstOperand = null;
+                        shouldResetDisplay = true;
+                    }
+                } else if (button.classList.contains('operator')) {
+                    if (currentInput !== '') {
+                        if (firstOperand === null) {
+                            firstOperand = currentInput;
+                        } else if (operator) {
+                            firstOperand = calculate(firstOperand, currentInput, operator);
+                        }
+                        operator = value;
+                        shouldResetDisplay = true;
+                    }
+                } else {
+                    if (shouldResetDisplay) {
+                        display.value = '';
+                        currentInput = '';
+                        shouldResetDisplay = false;
+                    }
+                    if (value === '.' && currentInput.includes('.')) return;
+                    currentInput += value;
+                    display.value = currentInput;
+                }
+            });
+        });
+        resetCalculator();
+    </script>
+</body>
+</html>
+
+Added HTML for Calculator project inside folder
